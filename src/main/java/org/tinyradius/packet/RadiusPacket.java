@@ -513,6 +513,46 @@ public class RadiusPacket {
 		return getAttribute(t.getVendorId(), t.getTypeCode());
 	}
 
+	
+
+	/**
+	 * Returns a Radius attribute of the given type and vendor ID
+	 * which may only occur once in the Radius packet.
+	 * 
+	 * @param vendorId
+	 *            vendor ID
+	 * @param type
+	 *            attribute type
+	 * @return List<RadiusAttribute>
+	 */
+	public List<RadiusAttribute> getAttributeList(int vendorId, int type) {
+		if (vendorId == -1)
+			return getAttributes(type);
+
+		return getAttributes(vendorId, type);
+	}
+
+	/**
+	 * Returns a list of Radius attributes of the given type name.
+	 * Also returns sub-attributes.
+	 * 
+	 * @param type
+	 *            attribute type name
+	 * @return List<RadiusAttribute>  or null if there is no such attribute
+	 * @throws RuntimeException
+	 *             if the attribute occurs multiple times
+	 */
+	public List<RadiusAttribute> getAttributeList(String type) {
+		if (type == null || type.length() == 0)
+			throw new IllegalArgumentException("type name is empty");
+
+		AttributeType t = dictionary.getAttributeTypeByName(type);
+		if (t == null)
+			throw new IllegalArgumentException("unknown attribute type name '" + type + "'");
+
+		return getAttributeList(t.getVendorId(), t.getTypeCode());
+	}
+
 	/**
 	 * Returns the value of the Radius attribute of the given type or
 	 * null if there is no such attribute.
